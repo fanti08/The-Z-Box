@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using TMPro;
 using System;
+using System.Globalization;
 
 public class calcu : MonoBehaviour
 {
@@ -32,12 +33,13 @@ public class calcu : MonoBehaviour
         if (multiplier > .2)
         {
             multiplier = .1f;
+            txt_result.text = result.ToString("F1", CultureInfo.InvariantCulture);/*/
             if (txt_result.text != "+" && txt_result.text != "-" && txt_result.text != "x" && txt_result.text != "÷" && txt_result.text != "√" && txt_result.text != "^") txt_result.text += ".";
             else
             {
-                txt_result.text = result.ToString();
+                txt_result.text = result.ToString("F2", CultureInfo.InvariantCulture);
                 txt_result.text += ".";
-            }
+            }/*/
         }
     }
 
@@ -50,7 +52,6 @@ public class calcu : MonoBehaviour
     {
         if (multiplier > .2)
         {
-            Debug.Log("no period");
             result *= 10;
             result += num;
         }
