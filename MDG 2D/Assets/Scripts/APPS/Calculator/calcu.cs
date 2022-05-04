@@ -13,10 +13,26 @@ public class calcu : MonoBehaviour
     [SerializeField] public TMP_FontAsset LiberationSans;
     [SerializeField] public TMP_FontAsset Junegull;
     [SerializeField] private float storedNum;
+    [SerializeField] private float multiplier()
+    {
+        int lenght = txt_result.text.Split(',').Count() > 1 && !isItResult ? txt_result.text.Substring(txt_result.text.IndexOf(",")).Length : 0;
+        float mp = 1;
+        for (int i = lenght; i > 0; i--) mp *= .1f;
+        return mp;
+    }
+    [SerializeField] private bool isItResult;
+    [SerializeField] private bool isItOperator()
+    {
+        if (txt_result.text == "+" || txt_result.text == "-" || txt_result.text == "x" || txt_result.text == "÷" ||
+            txt_result.text == "√" || txt_result.text == "^")
+            return true;
+        return false;
+    }
+
 
     private void Update()
     {
-        if (txt_result.text != "+" && txt_result.text != "-" && txt_result.text != "x" && txt_result.text != "÷" && txt_result.text != "√" && txt_result.text != "^")
+        if (!isItOperator())
         {
             txt_result.font = Junegull;
             txt_result.fontStyle = FontStyles.Normal;
@@ -27,37 +43,37 @@ public class calcu : MonoBehaviour
             txt_result.fontStyle = FontStyles.Bold;
         }
     }
-
-    float multiplier()
-    {
-        int lenght = txt_result.text.Split('.').Count() > 1 ? txt_result.text.Substring(txt_result.text.IndexOf(".")).Length : 0;
-        float mp = 1;
-        for (int i = lenght; i > 0; i--) mp *= .1f;
-        return mp;
-    }
     
     public void period()
     {
         if (multiplier() > .2)
         {
-            txt_result.text = result.ToString("G", CultureInfo.CreateSpecificCulture("fr-FR"));
-            txt_result.text = result.ToString("F1", CultureInfo.CreateSpecificCulture("fr-FR"));
-            txt_result.text = txt_result.text.Substring(0, txt_result.text.Length - 1);
+            if (isItResult || isItOperator() || txt_result.text == "")
+            {
+                txt_result.text = "0,";
+                isItResult = false;
+            }
+            else txt_result.text += ",";
         }
     }
 
     public void numbers(int num)
     {
-        txt_result.text += num.ToString();
-        result = float.Parse(txt_result.text);
+        if (isItOperator() || isItResult)
+        {
+            txt_result.text = "";
+            isItResult = false;
+        }
 
-        txt_result.text = result.ToString("G", CultureInfo.CreateSpecificCulture("fr-FR"));
+        txt_result.text += num.ToString();
     }
 
     public void operation(string op)
     {
+        isItResult = false;
         theOperation = op;
-        if (result != 0) saved = result;
+        result = float.Parse(txt_result.text);
+        saved = result;
         result = 0;
         txt_result.text = theOperation;
     }
@@ -68,35 +84,43 @@ public class calcu : MonoBehaviour
         if (s_r == "r")
         {
             result = storedNum;
-            txt_result.text = result.ToString("G", CultureInfo.CreateSpecificCulture("fr-FR"));
+            txt_result.text = result.ToString(CultureInfo.CreateSpecificCulture("fr-FR"));
         }
     }
 
     public void equals()
     {
+        if (isItOperator())
+        {
+            saved = 0;
+            theOperation = "";
+            txt_result.text = "";
+        }
+
         switch (theOperation)
         {
             case "+":
-                result = saved + result;
+                result = saved + float.Parse(txt_result.text);
                 break;
             case "-":
-                result = saved - result;
+                result = saved - float.Parse(txt_result.text);
                 break;
             case "x":
-                result = saved * result;
+                result = saved * float.Parse(txt_result.text);
                 break;
             case "÷":
-                result = saved / result;
+                result = saved / float.Parse(txt_result.text);
                 break;
             case "√":
-                result = (float)Math.Sqrt(result);
+                result = (float)Math.Sqrt(float.Parse(txt_result.text));
                 break;
             case "^":
-                result = (float)Math.Pow(saved, result);
+                result = (float)Math.Pow(saved, float.Parse(txt_result.text));
                 break;
         }
-        
-        txt_result.text = result.ToString("G", CultureInfo.CreateSpecificCulture("fr-FR"));
+
+        isItResult = true;
+        txt_result.text = result.ToString(CultureInfo.CreateSpecificCulture("fr-FR"));
         multiplier().Equals(1);
         theOperation = "";
         saved = result;
@@ -105,24 +129,18 @@ public class calcu : MonoBehaviour
 
     public void delete()
     {
-        if (txt_result.text != "+" && txt_result.text != "-" && txt_result.text != "x" && txt_result.text != "÷" && txt_result.text != "√" && txt_result.text != "^")
-        {
-            if (txt_result.text.Length > 0) txt_result.text = txt_result.text.Substring(0, txt_result.text.Length - 1);
-            if (txt_result.text.Length == 0 || result == 0)
-            {
-                txt_result.text = "0";
-                saved = 0;
-            }
-
-            result = float.Parse(txt_result.text);
-            print(theOperation);
-        }
-
+        if (!isItOperator())
+            txt_result.text = txt_result.text.Length > 0 ? txt_result.text.Substring(0, txt_result.text.Length - 1) : "";
         else
         {
             theOperation = "";
-            result = saved;
-            txt_result.text = result.ToString("G", CultureInfo.CreateSpecificCulture("fr-FR"));
+            txt_result.text = saved.ToString(CultureInfo.CreateSpecificCulture("fr-FR"));
+        }
+
+        if (isItResult)
+        {
+            txt_result.text = "";
+            isItResult = false;
         }
     }
 }
