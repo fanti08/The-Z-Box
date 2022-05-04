@@ -26,8 +26,6 @@ public class calcu : MonoBehaviour
             txt_result.font = LiberationSans;
             txt_result.fontStyle = FontStyles.Bold;
         }
-
-        print(result);
     }
 
     float multiplier()
@@ -42,8 +40,8 @@ public class calcu : MonoBehaviour
     {
         if (multiplier() > .2)
         {
-            txt_result.text = result.ToString("G", CultureInfo.InvariantCulture);
-            txt_result.text = result.ToString("F1", CultureInfo.InvariantCulture);
+            txt_result.text = result.ToString("G", CultureInfo.CreateSpecificCulture("fr-FR"));
+            txt_result.text = result.ToString("F1", CultureInfo.CreateSpecificCulture("fr-FR"));
             txt_result.text = txt_result.text.Substring(0, txt_result.text.Length - 1);
         }
     }
@@ -53,7 +51,7 @@ public class calcu : MonoBehaviour
         txt_result.text += num.ToString();
         result = float.Parse(txt_result.text);
 
-        txt_result.text = result.ToString("G", CultureInfo.InvariantCulture);
+        txt_result.text = result.ToString("G", CultureInfo.CreateSpecificCulture("fr-FR"));
     }
 
     public void operation(string op)
@@ -70,7 +68,7 @@ public class calcu : MonoBehaviour
         if (s_r == "r")
         {
             result = storedNum;
-            txt_result.text = result.ToString("G", CultureInfo.InvariantCulture);
+            txt_result.text = result.ToString("G", CultureInfo.CreateSpecificCulture("fr-FR"));
         }
     }
 
@@ -98,8 +96,9 @@ public class calcu : MonoBehaviour
                 break;
         }
         
-        txt_result.text = result.ToString("G", CultureInfo.InvariantCulture);
+        txt_result.text = result.ToString("G", CultureInfo.CreateSpecificCulture("fr-FR"));
         multiplier().Equals(1);
+        theOperation = "";
         saved = result;
         result = 0;
     }
@@ -123,7 +122,7 @@ public class calcu : MonoBehaviour
         {
             theOperation = "";
             result = saved;
-            txt_result.text = result.ToString("G", CultureInfo.InvariantCulture);
+            txt_result.text = result.ToString("G", CultureInfo.CreateSpecificCulture("fr-FR"));
         }
     }
 }
